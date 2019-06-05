@@ -22,7 +22,7 @@ from absl import flags
 from absl import logging
 import tensorflow as tf
 
-#from official.utils.flags import core as flags_core
+from official.utils.flags import core as flags_core
 
 URL_ROOT = "https://archive.ics.uci.edu/ml/machine-learning-databases/00280"
 INPUT_FILE = "HIGGS.csv.gz"
