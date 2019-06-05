@@ -1,4 +1,4 @@
-# Copyright 2018 The TensorFlow Authors. All Rights Reserved.
+# Copyright 2019 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,12 +25,13 @@ import pandas as pd
 import tensorflow as tf
 
 # pylint: disable=g-bad-import-order
+from absl import logging
 from official.boosted_trees import train_higgs
 from official.utils.testing import integration
 
 TEST_CSV = os.path.join(os.path.dirname(__file__), "train_higgs_test.csv")
 
-tf.logging.set_verbosity(tf.logging.ERROR)
+logging.set_verbosity(logging.ERROR)
 
 
 class BaseTest(tf.test.TestCase):
@@ -51,7 +52,7 @@ class BaseTest(tf.test.TestCase):
     # numpy.savez doesn't take gfile.Gfile, so need to write down and copy.
     tmpfile = tempfile.NamedTemporaryFile()
     np.savez_compressed(tmpfile, data=data)
-    tf.gfile.Copy(tmpfile.name, self.input_npz)
+    tf.io.gfile.copy(tmpfile.name, self.input_npz)
 
   def test_read_higgs_data(self):
     """Tests read_higgs_data() function."""
@@ -97,7 +98,7 @@ class BaseTest(tf.test.TestCase):
 
     # Check features.
     features, labels = input_fn().make_one_shot_iterator().get_next()
-    with tf.Session() as sess:
+    with tf.compat.v1.Session() as sess:
       features, labels = sess.run((features, labels))
     self.assertIsInstance(features, dict)
     self.assertAllEqual(feature_names, sorted(features.keys()))
@@ -108,7 +109,7 @@ class BaseTest(tf.test.TestCase):
         [0.869293, 0.907542, 0.798834, 1.344384, 1.105009, 1.595839,
          0.409391, 0.933895, 1.405143, 1.176565, 0.945974, 0.739356,
          1.384097, 1.383548, 1.343652],
-        np.squeeze(features[feature_names[0]], 1))
+        np.squeeze(features[feature_names[tf.0]], 1))
     self.assertAllClose(
         [-0.653674, -0.213641, 1.540659, -0.676015, 1.020974, 0.643109,
          -1.038338, -2.653732, 0.567342, 0.534315, 0.720819, -0.481741,
@@ -129,7 +130,7 @@ class BaseTest(tf.test.TestCase):
             "--eval_count", "8",
         ],
         synth=False, max_train=None)
-    self.assertTrue(tf.gfile.Exists(os.path.join(model_dir, "checkpoint")))
+    self.assertTrue(tf.io.gfile.exists(os.path.join(model_dir, "checkpoint")))
 
   def test_end_to_end_with_export(self):
     """Tests end-to-end running."""
@@ -147,8 +148,8 @@ class BaseTest(tf.test.TestCase):
             "--eval_count", "8",
         ],
         synth=False, max_train=None)
-    self.assertTrue(tf.gfile.Exists(os.path.join(model_dir, "checkpoint")))
-    self.assertTrue(tf.gfile.Exists(os.path.join(export_dir)))
+    self.assertTrue(tf.io.gfile.exists(os.path.join(model_dir, "checkpoint")))
+    self.assertTrue(tf.io.gfile.exists(os.path.join(export_dir)))
 
 
 if __name__ == "__main__":

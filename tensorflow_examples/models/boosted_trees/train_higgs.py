@@ -229,8 +229,8 @@ def train_boosted_trees(flags_obj):
       test_id=flags_obj.benchmark_test_id)
 
   classifier = tf.estimator.BoostedTreesClassifier(
-      train_input_fn,
       feature_columns,
+      32,
       model_dir=flags_obj.model_dir or None,
       n_trees=flags_obj.n_trees,
       max_depth=flags_obj.max_depth,

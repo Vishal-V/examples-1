@@ -49,7 +49,7 @@ def _download_higgs_data_and_save_npz(data_dir):
           csv_file,
           dtype=np.float32,
           names=["c%02d" % i for i in range(29)]  # label + 28 features.
-      ).as_matrix()
+      ).values()
   finally:
     tf.io.gfile.remove(temp_filename)
 
